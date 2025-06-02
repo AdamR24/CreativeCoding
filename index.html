@@ -1,13 +1,118 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Creative Coding Portfolio</title>
-  </head>
+    <head>
+        <meta charset="utf-8" />
+        <title>Creative Coding Portfolio</title>
+        <style>
+            body {
+                background-color: #202020;
+                margin: 0;
+                padding: 2em;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                font-family: sans-serif;
+                color: white;
+            }
 
-  <body>
-      <a href="Clock.html">Clock</a><br/>
-      <a href="MouseDisturber.html">Mouse Disturber</a><br/>
-      <a href="TextDisplay.html">Text Display</a>
-  </body>
+            .cta {
+                background-color: #606060;
+                border-radius: 45px;
+                padding: 10px;
+                text-decoration: none;
+                color: inherit;
+                margin-right: 30px;
+            }
+
+            .cta:hover {
+                color: white !important;
+                background-color: #404040;
+                transition: 0.3s;
+            }
+
+            .cta:not(:hover) {
+                transition: 0.3s;
+            }
+
+            .row {
+                display: flex;
+                gap: 2em;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .row .card {
+                background-color: #303030;
+                padding: 2em;
+                border-radius: 12px;
+                flex: 1 1 300px;
+                max-width: 40vw;
+                display: flex;
+                flex-direction: column;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .row .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            }
+
+            .row .card .card-image {
+                display: flex;
+                justify-content: center;
+            }
+
+            .row .card .card-image img {
+                width: 40vw;
+            }
+
+            .row .card .card-content {
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+            }
+
+            .row .card .cta {
+                text-align: center;
+                margin: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="row">
+            <div class="card">
+                <div class="card-image">
+                    <img src="/assets/DataVisualizer-COPInbhl.png" alt="Data Visualizer">
+                </div>
+                <div class="card-content">
+                    <h2>Data Visualizer</h2>
+                    <p>The data visualizer is arguably the most simple technically out of the 3 experiements. Through the use of fetch, current weather data is requested from an API, and used to affect the scene. While I would of liked to have improved the scene more as it is rather low detail, a more detailed house or trees for example would not affect the visualization at all. One aspect I considered was having snow accumulate on the ground/rooftop, however I ended up scrapping this idea as the performance impact was too significant due to all the objects required. In order for this to be possible, a switch to using GPU shaders would likely be necessary. I chose to use HSL for colors due to it allowing me to easily modify the saturation to show cloud cover and luminance at night, while maintaining the same hue without resorting to a bunch of complex maths. At the start I originally intended to represent temperature aswell, but I could not come up with an idea I was happy with that was not using text to state the temperature. If I did this again in the future, I think it would benefit from being 3D, as that would allow wind direction to be represented, which is currently impossible due to the lack of depth. The rain could also change based on wind direction and not just wind speed then, which would add another piece of data that is represented. I would also consider using images to add texture to the house, for example a brick effect on the walls, or even using an image for the house entirely.</p>
+                </div>
+                <a href="DataVisualizer.html" class="cta">Data Visualizer</a>
+            </div>
+            <div class="card">
+                <div class="card-image">
+                    <img src="/assets/MouseDisturber-DvwptHxg.png" alt="Mouse Disturber">
+                </div>
+                <div class="card-content">
+                    <h2>Mouse Disturber</h2>
+                    <p>The mouse disturber is the experiment that I encountered the most issues with. I first began with the hover effect which I encountered no issues with and the circles simply get larger based on their proximity to the cursor. The ripple effect is when I first began to encounter issues with performance as there was noticable fps drops if you spam clicked, which I eventually traced back to an inefficient implementation of dist from p5, which I replaced with my own implementation. This largely resolved the issue for ripples, however when I began making the spiral trails, the issue reappeared. Due to the trails needing to check a list of previous points recursively for every circle on the grid, the previous issue found with the ripple effect reappeared but worse, as a single trail ended up causing noticable drops. To fix this, I added a cheaper (but significantly less accurate) check before calculating the exact distance to avoid the expensive sqrt call for most of the grid. This allowed many more trails to appear on the screen at once, resulting in me having the option to have a single click spawn multiple trails, however this does still result in FPS drops if you have too many on the screen at once. To further improve performance, I chose to use the internal (and undocumented) function _renderEllipse which is called internally by circle after argument validation. By skipping the validation there is a slight but noticable performance improvement, however p5 in general is not a good option for high performance. If I did this again, I would likely consider using a more performance oriented option such as q5.js, or writing native code to avoid the interpreter overhead.</p>
+                </div>
+                <a href="MouseDisturber.html" class="cta">Mouse Disturber</a>
+            </div>
+            <div class="card">
+                <div class="card-image">
+                    <img src="/assets/PatternGenerator-LBqyNNxY.png" alt="Pattern Generator">
+                </div>
+                <div class="card-content">
+                    <h2>Pattern Generator</h2>
+                    <p>For the pattern generator, I decided to experiment with flow fields that were generated with perlin noise. While I originally started with a fairly simple field that did not change the angle drastically, I ended up deciding that a more chaotic flow field was more interesting, and allowed for significantly more variation than would be possible otherwise. In addition, while each color is theoretically equally possible, as it is a random number generated from 0 to 255 to represent hue, greens appear to be the most dominant color to the eye. My hypothesis behind this is our eyes are more sensitive to green light, making it seem this way despite it being far more equal than it first appears. At first I was using random values for saturation and luminance aswell, but that led to washed out or muddy colors, resulting in the change to how it is now. If I did this again I would consider experimenting with this effect in 3D, however I think performance is likely to become a bottleneck due to how slow it gets above ~10k particles. I think it could also be interesting to experiment with different noise algorithms to see how it impacts the result, however p5 only includes perlin. I like the customisation i've made available, although I think it could of been interesting to have kept the options for saturation and luminance as a configuration option instead of hardcoding it to their current values. I think it could also be interesting to experiment with adding interaction between the lines, perhaps them changing direction or a color change to create a more abstract effect.</p>
+                </div>
+                <a href="PatternGenerator.html" class="cta">Pattern Generator</a>
+            </div>
+        </div>
+    </body>
 </html>
