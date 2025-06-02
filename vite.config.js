@@ -7,9 +7,9 @@ module.exports = defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        clock: resolve(__dirname, 'Clock.html'),
+        datavis: resolve(__dirname, 'DataVisualizer.html'),
         mouse: resolve(__dirname, 'MouseDisturber.html'),
-        text: resolve(__dirname, 'TextDisplay.html'),
+        pattern: resolve(__dirname, 'PatternGenerator.html'),
       }
     }
   }
